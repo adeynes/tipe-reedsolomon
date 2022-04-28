@@ -6,12 +6,12 @@ from typing import *
 # (can't typehint : Number currently because Liskov)
 
 class Number(Protocol):
-    @classmethod
-    def zero(cls) -> Number:
+    @staticmethod
+    def zero() -> Number:
         ...
 
-    @classmethod
-    def one(cls) -> Number:
+    @staticmethod
+    def one() -> Number:
         ...
 
     def __neg__(self) -> Number:
@@ -26,6 +26,9 @@ class Number(Protocol):
     def __mul__(self, other) -> Number:
         ...
 
+    def __pow__(self, power, modulo=None) -> Number:
+        ...
+
 
 class Int(Number):
     v: int
@@ -33,12 +36,12 @@ class Int(Number):
     def __init__(self, v):
         self.v = v
 
-    @classmethod
-    def zero(cls) -> Int:
+    @staticmethod
+    def zero() -> Int:
         return Int(0)
 
-    @classmethod
-    def one(cls) -> Int:
+    @staticmethod
+    def one() -> Int:
         return Int(1)
 
     def __eq__(self, other) -> bool:
@@ -55,6 +58,9 @@ class Int(Number):
 
     def __mul__(self, other) -> Int:
         return Int(self.v * other.v)
+
+    def __pow__(self, power, modulo=None) -> Int:
+        return Int(pow(self.v, power, modulo))
 
     def __str__(self):
         return str(self.v)
