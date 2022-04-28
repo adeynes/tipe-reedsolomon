@@ -76,13 +76,14 @@ class Polynomial(Generic[KT]):
         n = self.deg()
         p = divisor.deg()
         a = self.coeffs[-1]
-        b = divisor.coeffs[-1]
+
+        assert divisor.coeffs[-1] == self.K.one()
 
         if self.is_zero():
             return Polynomial.zero(self.K), Polynomial.zero(self.K)
 
         if n == 0 and p == 0:
-            return Polynomial(self.K, [a/b]), Polynomial.zero(self.K)
+            return Polynomial(self.K, [a]), Polynomial.zero(self.K)
 
         if p > n:
             return Polynomial.zero(self.K), self
@@ -90,10 +91,16 @@ class Polynomial(Generic[KT]):
         C = Polynomial(self.K, self.coeffs[:-1])
         D = Polynomial(self.K, divisor.coeffs[:-1])
 
-        E = Polynomial.constant(self.K, a/b)*Polynomial.Xn(self.K, n-p)
+        E = Polynomial.constant(self.K, a)*Polynomial.Xn(self.K, n-p)
         F = C - E*D
         Q, R = divmod(F, divisor)
         return E + Q, R
+
+    def __floordiv__(self, other):
+        return divmod(self, other)[0]
+
+    def __mod__(self, other):
+        return divmod(self, other)[1]
 
     def __str__(self):
         out = ""
