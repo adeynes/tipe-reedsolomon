@@ -42,6 +42,13 @@ class Polynomial(Generic[KT]):
     def deg(self) -> int:
         return len(self.coeffs) - 1
 
+    def eval(self, x: KT) -> KT:
+        y = self.coeffs[-1]
+        for i in range(1, self.deg() + 1):
+            y = y * x + self.coeffs[self.deg()-i]
+
+        return y
+
     def __neg__(self) -> Polynomial[KT]:
         return Polynomial(self.K, [-c for c in self.coeffs])
 
