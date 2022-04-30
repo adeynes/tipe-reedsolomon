@@ -26,7 +26,20 @@ class Number(Protocol):
     def __mul__(self, other) -> Number:
         ...
 
-    def __pow__(self, power, modulo=None) -> Number:
+    def __pow__(self, power: int, modulo=None) -> Number:
+        ...
+
+    def scalar_mult(self, k: int) -> Number:
+        ...
+
+
+class FiniteField(Number):
+    p: int
+    m: int
+    q: int
+
+    @staticmethod
+    def Generator():
         ...
 
 
@@ -59,8 +72,11 @@ class Int(Number):
     def __mul__(self, other) -> Int:
         return Int(self.v * other.v)
 
-    def __pow__(self, power, modulo=None) -> Int:
+    def __pow__(self, power: int, modulo=None) -> Int:
         return Int(pow(self.v, power, modulo))
+
+    def scalar_mult(self, k: int) -> Int:
+        return Int(k * self.v)
 
     def __str__(self):
         return str(self.v)

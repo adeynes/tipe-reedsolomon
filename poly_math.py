@@ -1,7 +1,9 @@
 from __future__ import annotations
 from typing_plus import *
 
+
 KT = TypeVar('KT', bound=Number)
+FT = TypeVar('FT', bound=FiniteField)
 
 
 # A polynomial in K[X] is a P: List[K] where P[i] is the coefficient of X^i:
@@ -19,6 +21,10 @@ class Polynomial(Generic[KT]):
     @staticmethod
     def zero(K: Type[KT]) -> Polynomial[KT]:
         return Polynomial(K, [K.zero()])
+
+    @staticmethod
+    def one(K: Type[KT]) -> Polynomial[KT]:
+        return Polynomial(K, [K.one()])
 
     @staticmethod
     def constant(K: Type[KT], a: KT) -> Polynomial[KT]:
@@ -43,11 +49,15 @@ class Polynomial(Generic[KT]):
         return len(self.coeffs) - 1
 
     def eval(self, x: KT) -> KT:
+        # Horner's algorithm
         y = self.coeffs[-1]
         for i in range(1, self.deg() + 1):
             y = y * x + self.coeffs[self.deg()-i]
 
         return y
+
+    def derivative(self) -> Polynomial[KT]:
+        return Polynomial(self.K, [self.coeffs[i].scalar_mult(i) for i in range(1, self.deg()+1)])
 
     def __neg__(self) -> Polynomial[KT]:
         return Polynomial(self.K, [-c for c in self.coeffs])
@@ -103,15 +113,26 @@ class Polynomial(Generic[KT]):
         Q, R = divmod(F, divisor)
         return E + Q, R
 
-    def __floordiv__(self, other):
+    def __floordiv__(self, other) -> Polynomial[KT]:
         return divmod(self, other)[0]
 
-    def __mod__(self, other):
+    def __mod__(self, other) -> Polynomial[KT]:
         return divmod(self, other)[1]
 
-    def __str__(self):
+    def __str__(self) -> str:
         out = ""
         for i in range(len(self.coeffs)):
             out += str(self.coeffs[i]) + "X^" + str(i) + "  "
 
         return out
+
+
+# TODO: Chien search
+def find_roots(F: Type[FT], P: Polynomial[FT]) -> List[FT]:
+    roots = []
+    for i in range(F.q - 1):
+        x = F.Generator()**i
+        if P.eval(x) == F.zero():
+            roots.append(x)
+
+    return roots
