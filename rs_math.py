@@ -12,6 +12,7 @@ def Generator_Poly(t: int) -> Polynomial[F256]:
     return G
 
 
+# If A*X^2t = QG + (B%G) then C = A*X^2t + (B%G) = QG so G | C
 def encode(A: Polynomial[F256], t: int) -> Polynomial[F256]:
     G = Generator_Poly(t)
 
@@ -79,7 +80,11 @@ def correct(D: Polynomial[F256], t: int) -> Polynomial[F256]:
 
     E = Polynomial[F256](F256, E_coeffs)
 
-    return Polynomial[F256](F256, (D - E).coeffs[(2*t):])
+    return D - E
+
+
+def extract_message(A: Polynomial[F256], t: int) -> Polynomial[F256]:
+    return Polynomial[F256](F256, A.coeffs[(2 * t):])
 
 
 def corrupt_message(msg: str, t: int, v: int) -> Polynomial[F256]:

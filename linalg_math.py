@@ -28,7 +28,7 @@ def transpose_matrix(M):
 
 
 def matrix_minor(M, i, j):
-    return [row[:j] + row[j+1:] for row in (M[:i] + M[i + 1:])]
+    return [row[:j] + row[j+1:] for row in (M[:i] + M[i+1:])]
 
 
 # Bareiss algorithm, see https://stackoverflow.com/questions/66192894/precise-determinant-of-integer-nxn-matrix
