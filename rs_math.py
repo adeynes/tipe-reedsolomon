@@ -83,19 +83,24 @@ def correct(D: Polynomial[F256], t: int) -> Polynomial[F256]:
     return D - E
 
 
-def extract_message(A: Polynomial[F256], t: int) -> Polynomial[F256]:
+def extract_msg(A: Polynomial[F256], t: int) -> Polynomial[F256]:
     return Polynomial[F256](F256, A.coeffs[(2 * t):])
 
 
-def corrupt_message(msg: str, t: int, v: int) -> Polynomial[F256]:
-    A = Polynomial[F256](F256, [F256(ord(x)) for x in msg])
-    C = encode(A, t)
+def str_to_poly(msg: str) -> Polynomial[F256]:
+    return Polynomial[F256](F256, [F256(ord(x)) for x in msg])
 
+
+def poly_to_str(A: Polynomial[F256]) -> str:
+    return "".join([chr(x.bin_rep) for x in A.coeffs])
+
+
+def corrupt_poly(C: Polynomial[F256], v: int) -> Polynomial[F256]:
     for _ in range(v):
         C.coeffs[randrange(len(C.coeffs))] = F256(randrange(256))
 
     return C
 
 
-def poly_to_message(A: Polynomial[F256]) -> str:
-    return "".join([chr(x.bin_rep) for x in A.coeffs])
+def corrupt_str_msg(msg: str, t: int, v: int) -> Polynomial[F256]:
+    return corrupt_poly(encode(str_to_poly(msg), t), v)
